@@ -15,7 +15,7 @@ module.exports = class MongooseTrailpack extends DatastoreTrailpack {
    * Ensure that this trailpack supports the configured migration
    */
   validate () {
-    if (!_.includes([ 'none', 'drop', 'create' ], this.app.config.database.models.migrate)) {
+    if (!_.includes([ 'none', 'drop', 'create', 'safe' ], this.app.config.database.models.migrate)) {
       throw new Error('Migrate must be configured to either "create" or "drop"')
     }
   }
@@ -24,8 +24,6 @@ module.exports = class MongooseTrailpack extends DatastoreTrailpack {
    * Create default configuration
    */
   configure () {
-    this.app.config.database.orm = 'mongoose'
-
     this.mongoose = mongoose
   }
 
@@ -39,14 +37,14 @@ module.exports = class MongooseTrailpack extends DatastoreTrailpack {
     // We will use default one
     mongoose.Promise = global.Promise
 
-    this.models = lib.Transformer.transformModels(this.app)
+    // Need to pick only mongoose stores
+    const stores = lib.Transformer.pickStores(this.app.config.database.stores);
+    this.models = lib.Transformer.transformModels(this.app, stores);
 
     this.orm = this.orm || {}
-    // Need to pick only mongoose stores
-    const stores = lib.Transformer.pickStores(this.app.config.database.stores)
     // iterating only through mongo stores
     this.connections = _.mapValues(stores, (_store, storeName) => {
-      const store = _.merge({ }, _store)
+      const store = _.merge({}, _store.options);
       if (!_.isString(store.uri))
         throw new Error('Store have to contain "uri" option')
 
@@ -72,7 +70,11 @@ module.exports = class MongooseTrailpack extends DatastoreTrailpack {
       return connection
     })
 
-    this.app.orm = this.orm
+    // merge the already specified Models if exist from other orms
+    if (!this.app.orm) {
+      this.app.orm = {};
+    }
+    _.merge(this.app.orm, this.orm);
 
     return this.migrate()
   }
@@ -110,11 +112,11 @@ module.exports = class MongooseTrailpack extends DatastoreTrailpack {
     const SchemaMigrationService = this.app.services.SchemaMigrationService
     const database = this.app.config.database
 
-    if (database.models.migrate == 'none') return
+    if (database.models.migrate === 'none') return
 
     return Promise.all(
       _.map(this.connections, connection => {
-        if (database.models.migrate == 'drop') {
+        if (database.models.migrate === 'drop') {
           return SchemaMigrationService.drop(connection)
         }
       }))

@@ -16,13 +16,22 @@ module.exports = {
   stores: {
 
     mongodbstore: {
-      // should be 'create' or 'drop'
       migrate: 'create',
-
       uri: 'mongodb://localhost:27017/test',
-
-      options: {}
+      options: {}   
+    },
+    
+    // if you want to use more than one orm you have to specify orm and options.
+    mongodbstoreMulti: {
+      orm: 'mongoose',
+      options: {
+        // should be 'create' or 'drop'
+        migrate: 'create',
+        uri: 'mongodb://localhost:27017/test',
+        options: {}   
+      }
     }
+
   },
 
   models: {

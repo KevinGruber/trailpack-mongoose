@@ -33,9 +33,12 @@ module.exports = _.defaultsDeep({
           }
         },
         storeoverride: {
-          uri: 'mongodb://localhost:27017/test2',
+          orm: 'mongoose',
           options: {
-
+            uri: 'mongodb://localhost:27017/test2',
+            options: {
+  
+            }
           }
         },
         notMongoStore: {
