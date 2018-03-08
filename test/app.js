@@ -37,7 +37,7 @@ module.exports = _.defaultsDeep({
           options: {
             uri: 'mongodb://localhost:27017/test2',
             options: {
-  
+
             }
           }
         },

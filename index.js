@@ -15,7 +15,7 @@ module.exports = class MongooseTrailpack extends DatastoreTrailpack {
    * Ensure that this trailpack supports the configured migration
    */
   validate () {
-    if (!_.includes([ 'none', 'drop', 'create', 'safe' ], this.app.config.database.models.migrate)) {
+    if (!_.includes(['none', 'drop', 'create', 'safe'], this.app.config.database.models.migrate)) {
       throw new Error('Migrate must be configured to either "create" or "drop"')
     }
   }
@@ -38,13 +38,13 @@ module.exports = class MongooseTrailpack extends DatastoreTrailpack {
     mongoose.Promise = global.Promise
 
     // Need to pick only mongoose stores
-    const stores = lib.Transformer.pickStores(this.app.config.database.stores);
-    this.models = lib.Transformer.transformModels(this.app, stores);
+    const stores = lib.Transformer.pickStores(this.app.config.database.stores)
+    this.models = lib.Transformer.transformModels(this.app, stores)
 
     this.orm = this.orm || {}
     // iterating only through mongo stores
     this.connections = _.mapValues(stores, (_store, storeName) => {
-      const store = _.merge({}, _store.options);
+      const store = _.merge({}, _store.options)
       if (!_.isString(store.uri))
         throw new Error('Store have to contain "uri" option')
 
@@ -72,9 +72,9 @@ module.exports = class MongooseTrailpack extends DatastoreTrailpack {
 
     // merge the already specified Models if exist from other orms
     if (!this.app.orm) {
-      this.app.orm = {};
+      this.app.orm = {}
     }
-    _.merge(this.app.orm, this.orm);
+    _.merge(this.app.orm, this.orm)
 
     return this.migrate()
   }
