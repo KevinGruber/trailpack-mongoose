@@ -109,7 +109,7 @@ module.exports = class MongooseTrailpack extends DatastoreTrailpack {
    * Run migrations
    */
   migrate () {
-    const SchemaMigrationService = this.app.services.SchemaMigrationService
+    const MongooseSchemaMigrationService = this.app.services.MongooseSchemaMigrationService
     const database = this.app.config.database
 
     if (database.models.migrate === 'none') return
@@ -117,7 +117,7 @@ module.exports = class MongooseTrailpack extends DatastoreTrailpack {
     return Promise.all(
       _.map(this.connections, connection => {
         if (database.models.migrate === 'drop') {
-          return SchemaMigrationService.drop(connection)
+          return MongooseSchemaMigrationService.drop(connection)
         }
       }))
   }

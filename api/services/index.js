@@ -1,2 +1,2 @@
-exports.SchemaMigrationService = require('./SchemaMigrationService')
-exports.FootprintService = require('./FootprintService')
+exports.MongooseSchemaMigrationService = require('./SchemaMigrationService')
+exports.MongooseFootprintService = require('./FootprintService')
